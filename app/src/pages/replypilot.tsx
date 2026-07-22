@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router";
 
-const ACTIVITY_POLL_MS = 20000;
-const HEALTH_POLL_MS = 30000;
 const FETCH_TIMEOUT_MS = 6000;
-const DEFAULT_BACKEND_URL = "";
+const DEFAULT_BACKEND_URL = "https://reply-pilot-backend-379609448905.asia-south1.run.app";
 
 /* ---------------- types ---------------- */
 
@@ -51,18 +49,15 @@ async function fetchJSON<T>(url: string): Promise<T> {
 }
 
 function buildBackendUrl(path: string, backendUrl?: string): string {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  const trimmedBackendUrl = backendUrl?.trim();
 
-  if (!backendUrl || !backendUrl.trim()) {
-    return normalizedPath;
+  if (!trimmedBackendUrl) {
+    return `/${normalizedPath}`;
   }
 
-  const trimmedUrl = backendUrl.trim();
-  if (!/^https?:\/\//i.test(trimmedUrl)) {
-    return normalizedPath;
-  }
-
-  return new URL(normalizedPath, trimmedUrl.endsWith("/") ? trimmedUrl : `${trimmedUrl}/`).toString();
+  const cleanBackendUrl = trimmedBackendUrl.endsWith("/") ? trimmedBackendUrl.slice(0, -1) : trimmedBackendUrl;
+  return `${cleanBackendUrl}/${normalizedPath}`;
 }
 
 async function pingBackend(url: string): Promise<boolean> {
@@ -172,7 +167,7 @@ export default function ReplyPilotLanding({ backendUrl }: ReplyPilotLandingProps
     }
   }, [pingUrl]);
 
-  /* ---------------- activity polling ---------------- */
+  /* ---------------- activity loading ---------------- */
   const loadActivity = useCallback(async () => {
     try {
       const data = await fetchJSON<LatestReplyRecord[]>(activityUrl);
@@ -196,19 +191,6 @@ export default function ReplyPilotLanding({ backendUrl }: ReplyPilotLandingProps
   useEffect(() => {
     void checkHealth();
     void loadActivity();
-
-    const activityTimer = setInterval(() => {
-      void loadActivity();
-    }, ACTIVITY_POLL_MS);
-
-    const healthTimer = setInterval(() => {
-      void checkHealth();
-    }, HEALTH_POLL_MS);
-
-    return () => {
-      clearInterval(activityTimer);
-      clearInterval(healthTimer);
-    };
   }, [checkHealth, loadActivity]);
 
   /* ---------------- back-to-top visibility ---------------- */
