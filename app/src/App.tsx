@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { HashRouter, Route, Routes } from 'react-router';
 import { useLocation } from 'react-router';
-import { useLenis } from '@/hooks/useLenis';
+import { getLenis, useLenis } from '@/hooks/useLenis';
 import Navigation from '@/components/Navigation';
 import CustomCursor from '@/components/CustomCursor';
 import Preloader from '@/components/Preloader';
@@ -16,6 +16,22 @@ import AchievementsSection from '@/sections/AchievementsSection';
 import ReplyPilotLanding from '@/pages/replypilot';
 import ProjectComingSoonPage from '@/pages/ProjectComingSoonPage';
 import ReplyPilotDocsPage from '@/pages/ReplyPilotDocsPage';
+
+function ScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const lenis = getLenis();
+
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, [location.pathname]);
+
+  return null;
+}
 
 function HomePage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -66,6 +82,7 @@ function HomePage() {
 export default function App() {
   return (
     <HashRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/project/replypilot" element={<ReplyPilotLanding />} />
