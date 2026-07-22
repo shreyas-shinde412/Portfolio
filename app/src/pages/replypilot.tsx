@@ -2,7 +2,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router";
 
 const ACTIVITY_POLL_MS = 20000;
+const HEALTH_POLL_MS = 30000;
 const FETCH_TIMEOUT_MS = 6000;
+const DEFAULT_BACKEND_URL = "";
 
 /* ---------------- types ---------------- */
 
@@ -48,6 +50,63 @@ async function fetchJSON<T>(url: string): Promise<T> {
   }
 }
 
+function buildBackendUrl(path: string, backendUrl?: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (!backendUrl || !backendUrl.trim()) {
+    return normalizedPath;
+  }
+
+  const trimmedUrl = backendUrl.trim();
+  if (!/^https?:\/\//i.test(trimmedUrl)) {
+    return normalizedPath;
+  }
+
+  return new URL(normalizedPath, trimmedUrl.endsWith("/") ? trimmedUrl : `${trimmedUrl}/`).toString();
+}
+
+async function pingBackend(url: string): Promise<boolean> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: "application/json,text/plain" },
+    });
+
+    if (!res.ok) {
+      return false;
+    }
+
+    const rawText = await res.text();
+    if (!rawText) {
+      return true;
+    }
+
+    try {
+      const parsed = JSON.parse(rawText);
+      if (typeof parsed === "string") {
+        return parsed.trim().toLowerCase() === "ok";
+      }
+      if (typeof parsed === "object" && parsed !== null) {
+        const status = (parsed as { status?: unknown }).status;
+        if (typeof status === "string") {
+          return status.trim().toLowerCase() === "ok";
+        }
+        if (typeof status === "boolean") {
+          return status;
+        }
+      }
+    } catch {
+      // fall back to plain text if JSON parsing fails
+    }
+
+    return rawText.trim().toLowerCase() === "ok";
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function initials(name: string): string {
   return (name || "?")
     .split(" ")
@@ -77,9 +136,9 @@ function formatReplyTime(timestamp?: string | { $date?: string }): string {
    Component
    ================================================================ */
 
-export default function ReplyPilotLanding() {
-  const [healthState, setHealthState] = useState<HealthState>("online");
-  const [statusReason, setStatusReason] = useState<string>("Backend is responding with 200 OK");
+export default function ReplyPilotLanding({ backendUrl }: ReplyPilotLandingProps = {}) {
+  const [healthState, setHealthState] = useState<HealthState>("connecting");
+  const [statusReason, setStatusReason] = useState<string>("Checking backend availability…");
 
   const [activityItems, setActivityItems] = useState<ActivityItem[]>([]);
   const [activityLive, setActivityLive] = useState(false);
@@ -90,13 +149,28 @@ export default function ReplyPilotLanding() {
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
 
-  const activityUrl = "/latest-replies";
+  const pingUrl = buildBackendUrl("/ping", backendUrl || DEFAULT_BACKEND_URL);
+  const activityUrl = buildBackendUrl("/latest-replies", backendUrl || DEFAULT_BACKEND_URL);
 
-  /* ---------------- health check (once on load, not polled) ---------------- */
-  const checkHealth = useCallback(() => {
-    setHealthState("online");
-    setStatusReason("Backend is responding with 200 OK");
-  }, []);
+  /* ---------------- health check ---------------- */
+  const checkHealth = useCallback(async () => {
+    setHealthState("connecting");
+    setStatusReason("Checking backend availability…");
+
+    try {
+      const isReachable = await pingBackend(pingUrl);
+      if (isReachable) {
+        setHealthState("online");
+        setStatusReason("Backend is responding with 200 OK");
+      } else {
+        setHealthState("offline");
+        setStatusReason("Backend is unreachable right now");
+      }
+    } catch (error) {
+      setHealthState("offline");
+      setStatusReason(error instanceof Error ? error.message : "Backend is unreachable right now");
+    }
+  }, [pingUrl]);
 
   /* ---------------- activity polling ---------------- */
   const loadActivity = useCallback(async () => {
@@ -120,11 +194,20 @@ export default function ReplyPilotLanding() {
   }, [activityUrl]);
 
   useEffect(() => {
-    checkHealth(); // checked once on mount / page load — not polled
-    loadActivity();
-    const activityTimer = setInterval(loadActivity, ACTIVITY_POLL_MS);
+    void checkHealth();
+    void loadActivity();
+
+    const activityTimer = setInterval(() => {
+      void loadActivity();
+    }, ACTIVITY_POLL_MS);
+
+    const healthTimer = setInterval(() => {
+      void checkHealth();
+    }, HEALTH_POLL_MS);
+
     return () => {
       clearInterval(activityTimer);
+      clearInterval(healthTimer);
     };
   }, [checkHealth, loadActivity]);
 

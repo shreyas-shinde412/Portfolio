@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { HashRouter, Route, Routes } from 'react-router';
 import { useLocation } from 'react-router';
 import { useLenis } from '@/hooks/useLenis';
 import Navigation from '@/components/Navigation';
@@ -65,13 +65,14 @@ function HomePage() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/project/replypilot" element={<ReplyPilotLanding />} />
         <Route path="/projects/replypilot" element={<ReplyPilotLanding />} />
         <Route path="/projects/modelhub" element={<ProjectComingSoonPage />} />
         <Route path="/replypilot-docs" element={<ReplyPilotDocsPage />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
