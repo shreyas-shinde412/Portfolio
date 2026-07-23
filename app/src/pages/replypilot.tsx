@@ -775,6 +775,17 @@ const CSS = `
   from{ transform:translate(0,0) scale(1) rotate(0deg); }
   to{ transform:translate(36px,-26px) scale(1.12) rotate(8deg); }
 }
+@media (max-width: 900px){
+  .rp-root::before{ opacity:0; }
+  .rp-root .rp-blob{
+    animation:none !important;
+    mix-blend-mode:normal;
+    filter:blur(44px);
+    opacity:.38;
+  }
+  .rp-activity-track.rp-scrolling{ animation:none !important; }
+}
+
 @media (prefers-reduced-motion:reduce){ .rp-blob{ animation:none; } }
 
 .rp-hero-grid, .rp-slide-head, .rp-product-grid{ position:relative; z-index:1; }
