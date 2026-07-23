@@ -193,6 +193,12 @@ export default function ReplyPilotLanding({ backendUrl }: ReplyPilotLandingProps
     void loadActivity();
   }, [checkHealth, loadActivity]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
   /* ---------------- back-to-top visibility ---------------- */
   useEffect(() => {
     const onScroll = () => setShowTopBtn(window.scrollY > 480);

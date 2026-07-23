@@ -29,6 +29,10 @@ const PROJECTS = [
   },
 ];
 
+function isExternalLink(url: string) {
+  return /^https?:\/\//i.test(url);
+}
+
 export default function ProjectsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -106,14 +110,23 @@ export default function ProjectsSection() {
               </p>
 
               <div className="flex flex-wrap gap-3 mb-6">
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-border-light px-5 py-2.5 font-mono text-[11px] font-medium tracking-[0.08em] uppercase text-charcoal transition-colors duration-300 hover:border-rust hover:text-rust"
-                >
-                  GitHub
-                </a>
+                {isExternalLink(project.githubUrl) ? (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-full border border-border-light px-5 py-2.5 font-mono text-[11px] font-medium tracking-[0.08em] uppercase text-charcoal transition-colors duration-300 hover:border-rust hover:text-rust"
+                  >
+                    GitHub
+                  </a>
+                ) : (
+                  <Link
+                    to={project.githubUrl}
+                    className="inline-flex items-center justify-center rounded-full border border-border-light px-5 py-2.5 font-mono text-[11px] font-medium tracking-[0.08em] uppercase text-charcoal transition-colors duration-300 hover:border-rust hover:text-rust"
+                  >
+                    GitHub
+                  </Link>
+                )}
                 <Link
                   to={project.liveUrl}
                   className="inline-flex items-center justify-center rounded-full bg-rust px-5 py-2.5 font-mono text-[11px] font-medium tracking-[0.08em] uppercase text-white transition-colors duration-300 hover:bg-rust-dark"

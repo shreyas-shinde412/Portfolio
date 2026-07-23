@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { HashRouter, Route, Routes } from 'react-router';
 import { useLocation } from 'react-router';
 import { getLenis, useLenis } from '@/hooks/useLenis';
@@ -20,14 +20,30 @@ import ReplyPilotDocsPage from '@/pages/ReplyPilotDocsPage';
 function ScrollToTop() {
   const location = useLocation();
 
-  useEffect(() => {
-    const lenis = getLenis();
-
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true });
-    } else {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
     }
+
+    const resetScroll = () => {
+      const lenis = getLenis();
+      const root = document.documentElement;
+      const body = document.body;
+
+      root.scrollTop = 0;
+      body.scrollTop = 0;
+
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      }
+    };
+
+    resetScroll();
+    const frame = window.requestAnimationFrame(resetScroll);
+
+    return () => window.cancelAnimationFrame(frame);
   }, [location.pathname]);
 
   return null;
