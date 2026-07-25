@@ -42,18 +42,6 @@ async function fetchJSON<T>(url: string): Promise<T> {
   }
 }
 
-function buildBackendUrl(path: string, backendUrl?: string): string {
-  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
-  const trimmedBackendUrl = backendUrl?.trim();
-
-  if (!trimmedBackendUrl) {
-    return `/${normalizedPath}`;
-  }
-
-  const cleanBackendUrl = trimmedBackendUrl.endsWith("/") ? trimmedBackendUrl.slice(0, -1) : trimmedBackendUrl;
-  return `${cleanBackendUrl}/${normalizedPath}`;
-}
-
 async function pingBackend(url: string): Promise<boolean> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -138,8 +126,8 @@ export default function ReplyPilotLanding() {
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
 
-  const pingUrl = buildBackendUrl("/ping");
-  const activityUrl = buildBackendUrl("/latest-replies");
+  const pingUrl = "/ping";
+  const activityUrl = "/latest-replies";
 
   /* ---------------- health check ---------------- */
   const checkHealth = useCallback(async () => {
@@ -327,10 +315,6 @@ export default function ReplyPilotLanding() {
                   <div className="rp-activity-viewport">
                     {doubledItems.length === 0 ? (
                       <div className="rp-activity-empty">
-                        <p>
-                          No backend connected yet. Pass a <code>backendUrl</code> prop to see
-                          live reply activity scroll through here.
-                        </p>
                         <button onClick={loadActivity}>Retry connection</button>
                       </div>
                     ) : (
