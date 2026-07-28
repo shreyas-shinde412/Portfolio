@@ -272,7 +272,7 @@ export default function ReplyPilotLanding() {
                   </p>
                   <a
                     className="rp-try-it-email"
-                    href="mailto:customer.replypilot@gmail.com?subject=Sample%20customer%20care%20query"
+                    href="mailto:customer.replypilot@gmail.com"
                   >
                     customer.replypilot@gmail.com
                   </a>
