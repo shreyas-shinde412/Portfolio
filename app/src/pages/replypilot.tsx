@@ -325,12 +325,12 @@ const CSS = `
   --shadow-btn:0 6px 20px rgba(184,85,54,0.28);
   --font-sans:'Geist Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   --font-mono:'Geist Mono','SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
-  position:relative; min-height:100vh; height:100vh; color:var(--ink); font-family:var(--font-sans);
+  position:relative; min-height:100vh; min-height:100dvh; height:auto; color:var(--ink); font-family:var(--font-sans);
   background:
     radial-gradient(circle at top left, rgba(184,85,54,0.10), transparent 28%),
     radial-gradient(circle at bottom right, rgba(138,137,120,0.10), transparent 24%),
     linear-gradient(180deg, #F6F5F0 0%, #F1EEE7 100%);
-  -webkit-font-smoothing:antialiased; overflow:hidden;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden; overflow-y:auto;
 }
 .rp-root::before{
   content:""; position:fixed; inset:0; pointer-events:none; z-index:9998; opacity:.03;
@@ -582,6 +582,15 @@ const CSS = `
     opacity:.38;
   }
   .rp-activity-track.rp-scrolling{ animation:none !important; }
+}
+
+@media (max-width: 720px){
+  .rp-root{ height:auto; min-height:100dvh; overflow-x:hidden; overflow-y:auto; }
+  .rp-main-single{ min-height:auto; align-items:flex-start; }
+  .rp-slide{ min-height:auto; justify-content:flex-start; padding:20px 0 36px; }
+  .rp-status-card{ max-width:none; }
+  .rp-activity-viewport{ height:clamp(220px, 44vh, 280px); }
+  .rp-activity-item{ padding:13px 16px; }
 }
 
 @media (prefers-reduced-motion:reduce){ .rp-blob{ animation:none; } }
