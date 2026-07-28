@@ -120,11 +120,8 @@ export default function ReplyPilotLanding() {
   const [activityItems, setActivityItems] = useState<ActivityItem[]>([]);
   const [activityLive, setActivityLive] = useState(false);
 
-  const [showTopBtn, setShowTopBtn] = useState(false);
-
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const cursorRingRef = useRef<HTMLDivElement>(null);
-  const topRef = useRef<HTMLDivElement>(null);
 
   const pingUrl = "/ping";
   const activityUrl = "/latest-replies";
@@ -175,19 +172,6 @@ export default function ReplyPilotLanding() {
     void loadActivity();
   }, [checkHealth, loadActivity]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, []);
-
-  /* ---------------- back-to-top visibility ---------------- */
-  useEffect(() => {
-    const onScroll = () => setShowTopBtn(window.scrollY > 480);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   /* ---------------- custom cursor (desktop only) ---------------- */
   useEffect(() => {
     if (!window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
@@ -213,8 +197,6 @@ export default function ReplyPilotLanding() {
     };
   }, []);
 
-  const scrollToTop = () => topRef.current?.scrollIntoView({ behavior: "smooth" });
-
   const doubledItems = activityItems.length > 0 ? [...activityItems, ...activityItems] : [];
   const scrollDuration = Math.max(activityItems.length * 3.2, 10);
 
@@ -227,20 +209,17 @@ export default function ReplyPilotLanding() {
 
       <header className="rp-header">
         <div className="rp-nav">
-          <button type="button" className="rp-logo" onClick={scrollToTop}>
+          <div className="rp-logo">
             <span className="rp-logo-mark" />
             Reply Pilot
-          </button>
+          </div>
           <nav className="rp-nav-links">
             <Link to="/replypilot-docs" className="rp-nav-docs">Docs</Link>
           </nav>
         </div>
       </header>
 
-      <main>
-        <div ref={topRef} id="rp-top" />
-
-        {/* ============== SLIDE 1 — HERO ============== */}
+      <main className="rp-main-single">
         <section className="rp-slide" id="rp-hero">
           <div className="rp-blob-layer" aria-hidden="true">
             <span className="rp-blob rp-blob-rust rp-blob-a" />
@@ -249,38 +228,27 @@ export default function ReplyPilotLanding() {
           </div>
           <div className="rp-wrap">
             <div className="rp-hero-grid">
-              <div>
-                <div className="rp-eyebrow">Customer care mail automation, run for you</div>
-                <h1>
-                  We run your customer
-                  <br />
-                  care inbox <em>for you.</em>
-                </h1>
+              <div className="rp-hero-copy">
+                <div className="rp-eyebrow">Customer care mail automation</div>
+                <h1>Reply Pilot</h1>
                 <p className="rp-lede">
-                  Reply Pilot is a fully managed customer care mail system — we operate it as
-                  your support backend. Every incoming query is read, matched against your
-                  policies through our RAG pipeline, and answered in your voice, so your team
-                  only steps in when a conversation truly needs a person.
+                  A calm, policy-aware inbox layer for modern support teams.
+                  It reads incoming messages, drafts replies in your voice,
+                  and keeps the human review step clear when something needs care.
                 </p>
 
                 <div className="rp-try-it-box">
-                  <div className="rp-try-it-label">See the magic yourself</div>
-                  <p>
-                    Send us a real customer-care style email — a refund request, a login
-                    problem, a registration query, anything — and watch Reply Pilot draft the
-                    reply.
-                  </p>
+                  <div className="rp-try-it-label">See the magic</div>
+                  <p>Send a real support email and watch the draft appear.</p>
                   <a
                     className="rp-try-it-email"
                     href="mailto:customer.replypilot@gmail.com"
                   >
                     customer.replypilot@gmail.com
                   </a>
-                  <div className="rp-try-it-note">No setup needed to try it — just send the mail.</div>
                 </div>
               </div>
 
-              {/* LIVE BACKEND STATUS CARD */}
               <div className="rp-status-card">
                 <div className="rp-status-head">
                   <span className="rp-status-title">Backend status</span>
@@ -303,10 +271,9 @@ export default function ReplyPilotLanding() {
                   </div>
                 </div>
 
-                {/* LIVE BACKEND-DRIVEN ACTIVITY WIDGET */}
                 <div className="rp-card rp-activity-card rp-activity-card-inline">
                   <div className="rp-activity-head">
-                    <span className="rp-status-title">Recent activity</span>
+                    <span className="rp-status-title">Recent Replies</span>
                     <span className={`rp-live-chip ${activityLive ? "" : "rp-off"}`}>
                       <span className="rp-live-dot" />
                       {activityLive ? "live" : "offline"}
@@ -340,161 +307,7 @@ export default function ReplyPilotLanding() {
             </div>
           </div>
         </section>
-
-        {/* ============== SLIDE 2 — PRODUCT + LIVE ACTIVITY ============== */}
-        <section className="rp-slide rp-slide-last" id="rp-product">
-          <div className="rp-blob-layer" aria-hidden="true">
-            <span className="rp-blob rp-blob-olive rp-blob-a" />
-            <span className="rp-blob rp-blob-rust rp-blob-b" />
-          </div>
-          <div className="rp-wrap">
-            <div className="rp-slide-head">
-              <div>
-                <div className="rp-eyebrow">How we run it for you</div>
-                <h2 id="rp-activity">Your inbox. Our operations team and RAG system.</h2>
-              </div>
-              <p>
-                We plug into your support mailbox and operate the whole reply pipeline — your
-                team keeps oversight, we handle the volume.
-              </p>
-            </div>
-
-            <div className="rp-product-grid">
-              <div className="rp-steps">
-                <div className="rp-step">
-                  <span className="rp-step-num">1</span>
-                  <div>
-                    <h3>We onboard your mailbox and policies</h3>
-                    <p>
-                      Hand us your support inbox and existing policy docs — we index them into
-                      a RAG knowledge base built for your business.
-                    </p>
-                  </div>
-                </div>
-                <div className="rp-step">
-                  <span className="rp-step-num">2</span>
-                  <div>
-                    <h3>Our system answers, category by category</h3>
-                    <p>
-                      Every incoming mail is classified and matched to the right policy —
-                      login, refund, registration, and more — before a reply is drafted.
-                    </p>
-                  </div>
-                </div>
-                <div className="rp-step">
-                  <span className="rp-step-num">3</span>
-                  <div>
-                    <h3>Routine replies go out, edge cases come to us</h3>
-                    <p>
-                      Anything outside the guardrails you set is escalated to our operations
-                      team, not left to guess — nothing risky ships unattended.
-                    </p>
-                  </div>
-                </div>
-                <div className="rp-step">
-                  <span className="rp-step-num">4</span>
-                  <div>
-                    <h3>We verify tone, policy fit, and reply safety</h3>
-                    <p>
-                      Before an answer leaves the system, we check it against your policy set,
-                      known categories, and escalation rules to prevent unsafe or off-brand
-                      responses.
-                    </p>
-                  </div>
-                </div>
-                <div className="rp-step">
-                  <span className="rp-step-num">5</span>
-                  <div>
-                    <h3>Missing context is handled explicitly</h3>
-                    <p>
-                      If the mailbox data is incomplete or ambiguous, the workflow does not
-                      invent details. It flags the gap, brings in human review, or keeps the
-                      reply conservative.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="rp-category-block">
-                  <div className="rp-cat-label">Our RAG knowledge base is already tuned for</div>
-                  <div className="rp-chip-row">
-                    <span className="rp-chip rp-chip-accent">Login &amp; Access</span>
-                    <span className="rp-chip rp-chip-accent">Registration</span>
-                    <span className="rp-chip rp-chip-accent">Refunds</span>
-                    <span className="rp-chip">Billing &amp; Payments</span>
-                    <span className="rp-chip">Order Tracking</span>
-                    <span className="rp-chip">Cancellations</span>
-                    <span className="rp-chip">Account Management</span>
-                    <span className="rp-chip">Shipping &amp; Delivery</span>
-                    <span className="rp-chip">Subscription Changes</span>
-                    <span className="rp-chip">Technical Support</span>
-                    <span className="rp-chip">Complaints &amp; Escalations</span>
-                    <span className="rp-chip">+ your custom categories</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rp-side-stack">
-                <div className="rp-warning-card">
-                  <div className="rp-warning-eyebrow">Warning</div>
-                  <h3>
-                    Without proper RAG optimization, responses can drift into incomplete,
-                    inaccurate, or unsupported information.
-                  </h3>
-                  <p>
-                    When policy grounding is weak, the system may generate confident-sounding
-                    answers that are not backed by your customer support knowledge base.
-                  </p>
-                  <p className="rp-warning-highlight">
-                    With our approach, we tailor the solution to your business needs and data,
-                    ensuring responses stay accurate, relevant, and aligned with your
-                    organization’s policies.
-                  </p>
-                </div>
-
-                <div className="rp-note-card">
-                  <div className="rp-note-title">What we protect</div>
-                  <ul className="rp-note-list">
-                    <li>Customer trust through grounded policy answers</li>
-                    <li>Reply quality by preventing unsupported claims</li>
-                    <li>Operational safety with controlled escalation paths</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
-
-      <footer className="rp-footer" id="rp-footer">
-        <div className="rp-wrap">
-          <div className="rp-footer-row">
-            <span className="rp-fine">© 2026 Reply Pilot · Your customer care mail system, operated by us</span>
-            <span className="rp-fine">
-              Backend URL is a prop; endpoints &amp; polling live at the top of this file
-            </span>
-          </div>
-        </div>
-      </footer>
-
-      <button
-        id="rp-top-btn"
-        className={showTopBtn ? "rp-show" : ""}
-        aria-label="Back to top"
-        onClick={scrollToTop}
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#B85536"
-          strokeWidth={2.4}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M18 15l-6-6-6 6" />
-        </svg>
-      </button>
     </div>
   );
 }
@@ -512,12 +325,12 @@ const CSS = `
   --shadow-btn:0 6px 20px rgba(184,85,54,0.28);
   --font-sans:'Geist Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   --font-mono:'Geist Mono','SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
-  position:relative; min-height:100vh; color:var(--ink); font-family:var(--font-sans);
+  position:relative; min-height:100vh; height:100vh; color:var(--ink); font-family:var(--font-sans);
   background:
     radial-gradient(circle at top left, rgba(184,85,54,0.10), transparent 28%),
     radial-gradient(circle at bottom right, rgba(138,137,120,0.10), transparent 24%),
     linear-gradient(180deg, #F6F5F0 0%, #F1EEE7 100%);
-  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; overflow:hidden;
 }
 .rp-root::before{
   content:""; position:fixed; inset:0; pointer-events:none; z-index:9998; opacity:.03;
@@ -539,9 +352,9 @@ const CSS = `
   #rp-cursor-ring.rp-active{ border-color:var(--rust); transform:translate(-50%,-50%) scale(1.35); }
 }
 
-.rp-wrap{ max-width:1120px; margin:0 auto; padding:0 28px; }
+.rp-wrap{ width:min(100%, 1120px); margin:0 auto; padding:0 clamp(20px, 4vw, 32px); }
 
-.rp-header{ position:sticky; top:0; z-index:50; background:rgba(246,245,240,0.86);
+.rp-header{ position:sticky; top:0; z-index:50; width:100%; background:rgba(246,245,240,0.86);
   backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
 .rp-nav{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px;
   max-width:1120px; margin:0 auto; }
@@ -573,9 +386,9 @@ const CSS = `
 .rp-btn-ghost{ background:transparent; color:var(--ink); border-color:var(--border); }
 .rp-btn-ghost:hover{ border-color:var(--olive); background:var(--rust-tint); }
 
-.rp-slide{ min-height:100svh; display:flex; flex-direction:column; justify-content:center;
-  padding:64px 0 56px; position:relative; border-bottom:1px solid var(--border); }
-.rp-slide-last{ border-bottom:none; }
+.rp-main-single{ width:100%; min-height:calc(100vh - 72px); display:flex; align-items:center; justify-content:center; }
+.rp-slide{ width:100%; min-height:calc(100vh - 72px); display:flex; flex-direction:column; justify-content:center;
+  padding:24px 0 28px; position:relative; border-bottom:none; }
 .rp-eyebrow{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em;
   text-transform:uppercase; color:var(--rust); display:flex; align-items:center; gap:9px; margin-bottom:18px; }
 .rp-eyebrow::before{ content:""; width:16px; height:1px; background:var(--rust); }
@@ -586,13 +399,14 @@ const CSS = `
 .rp-lede{ font-size:clamp(16px,1.9vw,19px); line-height:1.55; color:#4B4A44; max-width:560px; margin:0 0 34px; }
 .rp-hero-ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:56px; }
 
-.rp-hero-grid{ display:grid; grid-template-columns:1fr; gap:36px; align-items:start; }
-@media (min-width:900px){ .rp-hero-grid{ grid-template-columns:1.15fr 0.85fr; gap:48px; } }
+.rp-hero-grid{ display:grid; grid-template-columns:1fr; gap:28px; align-items:center; justify-items:center; width:100%; max-width:1000px; margin:0 auto; }
+@media (min-width:900px){ .rp-hero-grid{ grid-template-columns:minmax(0, 1.05fr) minmax(320px, 0.95fr); gap:32px; align-items:center; } }
+.rp-hero-copy{ width:100%; max-width:560px; }
 
 .rp-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg);
   box-shadow:var(--shadow-card); padding:22px; }
 
-.rp-status-card{ background:none; border:none; box-shadow:none; padding:0; display:flex; flex-direction:column; gap:16px; }
+.rp-status-card{ width:100%; max-width:460px; background:none; border:none; box-shadow:none; padding:0; display:flex; flex-direction:column; gap:16px; margin:0 auto; }
 .rp-status-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:0; }
 .rp-status-title{ font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--olive); }
 .rp-status-url{ font-size:11px; color:var(--olive); }
@@ -675,7 +489,7 @@ const CSS = `
 .rp-live-chip.rp-off{ color:var(--olive); background:var(--bg); }
 .rp-live-dot{ width:6px; height:6px; background:currentColor; border-radius:50%; }
 
-.rp-activity-viewport{ height:300px; overflow:hidden; position:relative; }
+.rp-activity-viewport{ height:240px; overflow:hidden; position:relative; }
 .rp-activity-viewport::before, .rp-activity-viewport::after{
   content:""; position:absolute; left:0; right:0; height:36px; z-index:2; pointer-events:none; }
 .rp-activity-viewport::before{ top:0; background:linear-gradient(var(--card), transparent); }
@@ -716,7 +530,7 @@ const CSS = `
 @keyframes rp-float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-4px);} }
 
 .rp-try-it-box{ background:var(--rust-tint); border:1px solid var(--border); border-radius:var(--radius-lg);
-  padding:20px 22px; margin-bottom:44px; max-width:560px; }
+  padding:18px 20px; margin-bottom:0; max-width:560px; }
 .rp-try-it-label{ font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em;
   color:var(--rust); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
 .rp-try-it-label::before{ content:"✉"; font-size:13px; }
