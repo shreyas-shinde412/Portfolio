@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block commonly private or admin-like paths if they ever appear
+Disallow: /private/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://shreyas-shinde.dev/sitemap.xml
