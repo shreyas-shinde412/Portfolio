@@ -108,8 +108,8 @@ export default function AboutSection() {
               className="relative w-full aspect-square lg:aspect-square lg:max-w-[500px] opacity-0"
             >
               <img
-                src="./shreyas-photo.png"
-                alt="Shreyas Shinde"
+                src="./robot.png"
+                alt="Robot"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
