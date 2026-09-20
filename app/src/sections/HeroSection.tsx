@@ -175,7 +175,6 @@ export default function HeroSection({ isReady }: HeroSectionProps) {
                 src="./shreyas-photo.png"
                 alt="Shreyas Shinde"
                 className="w-full h-full object-cover rounded-full"
-                style={{ transform: 'scaleX(-1)' }}
               />
               {/* Inner shadow overlay */}
               <div
