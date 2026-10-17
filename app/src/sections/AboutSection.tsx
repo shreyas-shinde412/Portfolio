@@ -108,7 +108,7 @@ export default function AboutSection() {
               className="relative w-full aspect-square lg:aspect-square lg:max-w-[500px] opacity-0"
             >
               <img
-                src="./robot.png"
+                src="https://ik.imagekit.io/kdsvtoymx/robot.png"
                 alt="Robot"
                 className="w-full h-full object-cover rounded-full"
               />

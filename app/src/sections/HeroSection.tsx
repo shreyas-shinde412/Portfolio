@@ -143,7 +143,7 @@ export default function HeroSection({ isReady }: HeroSectionProps) {
                 <Linkedin className="h-4.5 w-4.5" />
               </a>
               <a
-                href="/Shreyas_Resume.pdf"
+                href="https://ik.imagekit.io/kdsvtoymx/Shreyas_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-10 items-center gap-2 rounded-full border border-white/15 px-4 font-mono text-[11px] font-medium tracking-[0.06em] text-white transition-colors duration-300 hover:border-rust hover:text-rust"
@@ -172,7 +172,7 @@ export default function HeroSection({ isReady }: HeroSectionProps) {
               className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] lg:w-full lg:max-w-[420px] lg:h-auto lg:aspect-square opacity-0"
             >
               <img
-                src="./shreyas-photo.png"
+                src="https://ik.imagekit.io/kdsvtoymx/shreyas-photo.png"
                 alt="Shreyas Shinde"
                 className="w-full h-full object-cover rounded-full"
               />

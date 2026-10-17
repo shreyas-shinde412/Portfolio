@@ -52,7 +52,7 @@ export default function ReplyPilotDocsPage() {
           <div className="rounded-[24px] border border-[#D5D4CF] bg-white/90 p-4 shadow-[0_12px_30px_rgba(35,34,30,0.06)]">
             <div className="overflow-hidden rounded-[20px] border border-[#D5D4CF] bg-black">
               <video
-                src="/Video.mp4"
+                src="https://ik.imagekit.io/kdsvtoymx/Video.mp4"
                 controls
                 playsInline
                 className="aspect-video w-full h-auto object-contain bg-black"
