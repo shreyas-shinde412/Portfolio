@@ -43,7 +43,7 @@ export default function Footer() {
 
           <div className="mt-4">
             <a
-              href="./Shreyas_Resume.pdf"
+              href="https://ik.imagekit.io/kdsvtoymx/Shreyas_Resume.pdf"
               download
               className="inline-block border border-text-muted text-text-muted font-sans text-sm font-medium px-8 py-3.5 rounded-full hover:border-rust hover:text-rust transition-all duration-300"
             >
