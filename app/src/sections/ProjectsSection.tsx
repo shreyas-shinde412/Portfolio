@@ -20,7 +20,7 @@ const PROJECTS = [
   },
   {
     slug: 'modelhub',
-    name: 'ModelHub (In Progress)',
+    name: 'ModelHub',
     description:
       'A centralized service for managing and serving multiple ML models through a single FastAPI-based API. Supports synchronous and asynchronous inference, intelligent model routing, and background processing via RabbitMQ for scalable execution.',
     tech: ['Python', 'FastAPI', 'RabbitMQ', 'Redis', 'Docker', 'Kubernetes'],
